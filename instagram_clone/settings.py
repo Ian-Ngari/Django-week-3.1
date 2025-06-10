@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'django-insecure-bwd2&wz0m-0*vv@h&q(we#mtp5@#n3(9)u3*7j14lt)@yg3_v+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -75,15 +76,20 @@ WSGI_APPLICATION = 'instagram_clone.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'instagram1',
-        'USER': 'instagram_user1',
-        'PASSWORD': '123456',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'instagram1',
+#         'USER': 'instagram_user1',
+#         'PASSWORD': '123456',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#         dj_database_url.parse("postgresql://postgresql_ikmw_user:PmvfH5aGsEOgkHvlJ3OdW7LNJdIw1QwJ@dpg-d0rboc3uibrs73d39k00-a.oregon-postgres.render.com/postgresql_ikmw")
+#     }
+# }
+DATABASES = { 
+   # the link here is the external link provided on postgresql web service db 
+   "default": dj_database_url.parse("postgresql://postgresql_ikmw_user:PmvfH5aGsEOgkHvlJ3OdW7LNJdIw1QwJ@dpg-d0rboc3uibrs73d39k00-a.oregon-postgres.render.com/postgresql_ikmw") 
 }
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -132,8 +138,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_URL = '/static/' 
+STATICFILES_DIRS = [BASE_DIR / "static"]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
