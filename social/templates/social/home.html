@@ -1,0 +1,123 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            {% for post in posts %}
+            <div class="post-card mb-5 border rounded">
+                <div class="post-header d-flex align-items-center p-3">
+                    <img src="{{ post.author.profile.profile_pic.url }}" 
+                         alt="{{ post.author.username }}" 
+                         class="rounded-circle me-2" 
+                         width="32" 
+                         height="32"
+                         style="object-fit: cover;">
+                    <a href="{% url 'profile' post.author.username %}" class="text-decoration-none fw-bold text-dark">
+                        {{ post.author.username }}
+                    </a>
+                    <div class="dropdown ms-auto">
+                        <button class="btn btn-link text-dark" type="button" id="postDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-ellipsis-h"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="postDropdown">
+                            {% if post.author == request.user %}
+                            <li><a class="dropdown-item" href="{% url 'update_post' post.id %}">Edit</a></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'delete_post' post.id %}">Delete</a></li>
+                            {% else %}
+                            <li><a class="dropdown-item" href="{% url 'share_post' post.id %}">Share</a></li>
+                            <li><a class="dropdown-item text-danger" href="#">Report</a></li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+                
+                <img src="{{ post.image.url }}" 
+                     class="post-img w-100" 
+                     alt="Post image"
+                     style="aspect-ratio: 1/1; object-fit: cover;">
+                
+                <div class="post-actions d-flex p-3">
+                    <form action="{% url 'like_post' post.id %}" method="post" class="me-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-dark p-0">
+                            <i class="far fa-heart {% if request.user in post.likes.all %}text-danger fas{% endif %}" style="font-size: 1.5rem;"></i>
+                        </button>
+                    </form>
+                    <a href="{% url 'post_detail' post.id %}" class="btn btn-link text-dark me-2 p-0">
+                        <i class="far fa-comment" style="font-size: 1.5rem;"></i>
+                    </a>
+                    <form action="{% url 'share_post' post.id %}" method="post" class="me-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link text-dark p-0">
+                            <i class="fas fa-share-alt" style="font-size: 1.5rem;"></i>
+                        </button>
+                    </form>
+                    <a href="#" class="btn btn-link text-dark ms-auto p-0">
+                        <i class="far fa-bookmark" style="font-size: 1.5rem;"></i>
+                    </a>
+                </div>
+                
+                <div class="post-likes px-3">
+                    <span class="fw-bold">{{ post.likes.count }} likes</span>
+                </div>
+                
+                <div class="post-caption px-3 mb-1">
+                    <span class="fw-bold">{{ post.author.username }}</span> 
+                    {% for word in post.caption.split %}
+                        {% if word|first == '#' %}
+                            <a href="{% url 'search_users' %}?query={{ word|slice:'1:' }}" class="text-primary">#{{ word|slice:'1:' }}</a>
+                        {% else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                {% if post.comments.count > 2 %}
+                <div class="post-comments px-3 mb-1">
+                    <a href="{% url 'post_detail' post.id %}" class="text-decoration-none text-muted">
+                        View all {{ post.comments.count }} comments
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% for comment in post.comments.all|slice:":2" %}
+                <div class="post-comments px-3 mb-1">
+                    <span class="fw-bold">{{ comment.author.username }}</span> {{ comment.text }}
+                </div>
+                {% endfor %}
+                
+                <div class="post-time px-3 text-muted" style="font-size: 0.8rem;">
+                    {{ post.created_at|timesince }} ago
+                </div>
+                
+                <form action="{% url 'add_comment' post.id %}" method="post" class="comment-form d-flex border-top p-3">
+                    {% csrf_token %}
+                    <input type="text" 
+                           name="text" 
+                           class="form-control me-2 border-0" 
+                           placeholder="Add a comment..." 
+                           style="box-shadow: none;" 
+                           required>
+                    <button type="submit" class="btn btn-link text-primary fw-bold p-0">Post</button>
+                </form>
+            </div>
+            {% empty %}
+            <div class="text-center py-5">
+                <i class="far fa-images fa-5x mb-3" style="color: #dbdbdb;"></i>
+                <h4>No Posts Yet</h4>
+                <p>Create your first post!</p>
+                <a href="{% url 'create_post' %}" class="btn btn-primary">Create Post</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .post-card {
+        background: white;
+        margin-bottom: 30px;
+    }
+</style>
+{% endblock %}

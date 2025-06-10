@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}InstaSham{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #405DE6;
+            --danger-color: #E1306C;
+            --dark-color: #262626;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+        }
+        .navbar-brand {
+            font-family: 'Billabong', cursive;
+            font-size: 28px;
+        }
+        
+        @font-face {
+            font-family: 'Billabong';
+            src: url('https://fonts.cdnfonts.com/s/13949/Billabong.woff') format('woff');
+        }
+        
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .post-img {
+            width: 100%;
+            max-height: 600px;
+            object-fit: contain;
+        }
+        
+        .btn-instagram {
+            background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+            color: white;
+            font-weight: 600;
+        }
+        
+        .dropdown-menu {
+            min-width: 200px;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.7rem;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fab fa-instagram fa-lg"></i> InstaSham
+            </a>
+            
+            <div class="d-flex align-items-center">
+                <a href="{% url 'home' %}" class="mx-3 text-dark">
+                    <i class="fas fa-home fa-lg"></i>
+                </a>
+                <a href="{% url 'create_post' %}" class="mx-3 text-dark">
+                    <i class="far fa-plus-square fa-lg"></i>
+                </a>
+                
+                {% if user.is_authenticated %}
+                <div class="dropdown mx-3 position-relative">
+                    <a href="#" class="text-dark" id="notificationsDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="far fa-bell fa-lg"></i>
+                        {% if user.profile.unread_notifications_count > 0 %}
+                        <span class="badge bg-danger notification-badge">
+                            {{ user.profile.unread_notifications_count }}
+                        </span>
+                        {% endif %}
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        {% for notification in user.notifications.all|slice:":5" %}
+                        <li>
+                            <a class="dropdown-item {% if notification.is_unread %}fw-bold{% endif %}" 
+                               href="{{ notification.link }}">
+                                {{ notification.message }}
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li><span class="dropdown-item">No notifications</span></li>
+                        {% endfor %}
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#">View all notifications</a></li>
+                    </ul>
+                </div>
+                
+                <div class="dropdown mx-3">
+                    <a href="#" class="text-dark" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="far fa-user fa-lg"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="{% url 'profile' user.username %}">Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'edit_profile' %}">Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form action="{% url 'logout' %}" method="post" class="px-3 py-1">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-link text-danger p-0">Log Out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.getElementById('notificationsDropdown').addEventListener('shown.bs.dropdown', function() {
+            fetch("{% url 'mark_notifications_read' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                credentials: 'same-origin'
+            });
+        });
+    });
+    </script>
+</body>
+</html>

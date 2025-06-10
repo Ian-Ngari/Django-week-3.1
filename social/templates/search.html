@@ -1,0 +1,38 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <h2 class="mb-4">Search Results</h2>
+        
+        <form method="get" action="{% url 'search_users' %}" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="query" class="form-control" placeholder="Search users..." 
+                       value="{{ request.GET.query }}">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        
+        {% if users %}
+        <div class="list-group">
+            {% for user in users %}
+            <a href="{% url 'profile' user.username %}" class="list-group-item list-group-item-action">
+                <div class="d-flex align-items-center">
+                    <img src="{{ user.profile.profile_pic.url }}" alt="{{ user.username }}" 
+                         class="rounded-circle me-3" width="50" height="50">
+                    <div>
+                        <h5>{{ user.username }}</h5>
+                        <small class="text-muted">{{ user.profile.bio|truncatechars:50 }}</small>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">
+            No users found matching your search.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

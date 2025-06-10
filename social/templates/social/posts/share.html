@@ -1,0 +1,29 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Share Post</h4>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <img src="{{ post.image.url }}" class="img-fluid mb-3">
+                        <p>{{ post.caption }}</p>
+                    </div>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea class="form-control" name="message" placeholder="Add a message (optional)"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Share</button>
+                        <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

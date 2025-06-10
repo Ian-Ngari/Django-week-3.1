@@ -1,0 +1,36 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card p-4">
+                <h3 class="text-center mb-4">InstaSham</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="text" name="username" class="form-control" placeholder="Username" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mb-3">Log In</button>
+                    <div class="text-center mb-3">
+                        <span class="text-muted">OR</span>
+                    </div>
+                    <a href="#" class="btn btn-link w-100 text-decoration-none mb-3">
+                        <i class="fab fa-facebook-square me-2"></i> Log in with Facebook
+                    </a>
+                    <a href="{% url 'password_reset' %}" class="d-block text-center text-decoration-none">
+                        Forgot password?
+                    </a>
+                </form>
+            </div>
+            
+            <div class="card mt-3 p-4 text-center">
+                Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Sign up</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

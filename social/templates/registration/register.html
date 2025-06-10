@@ -1,0 +1,71 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="post-card p-4">
+                <h3 class="text-center mb-4">InstaSham</h3>
+                <p class="text-center text-muted mb-4">Sign up to see photos and videos from your friends.</p>
+                
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <input type="email" name="email" class="form-control {% if form.errors.email %}is-invalid{% endif %}" 
+                               placeholder="Email" required value="{{ form.email.value|default:'' }}">
+                        {% if form.errors.email %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.email.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" name="username" class="form-control {% if form.errors.username %}is-invalid{% endif %}" 
+                               placeholder="Username" required value="{{ form.username.value|default:'' }}">
+                        {% if form.errors.username %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.username.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password1" class="form-control {% if form.errors.password1 %}is-invalid{% endif %}" 
+                               placeholder="Password" required>
+                        {% if form.errors.password1 %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.password1.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" name="password2" class="form-control {% if form.errors.password2 %}is-invalid{% endif %}" 
+                               placeholder="Confirm Password" required>
+                        {% if form.errors.password2 %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.password2.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-instagram w-100 mb-3">Sign Up</button>
+                    <p class="text-muted text-center small">
+                        By signing up, you agree to our Terms, Data Policy and Cookies Policy.
+                    </p>
+                </form>
+            </div>
+            
+            <div class="post-card mt-3 text-center p-4">
+                Have an account? <a href="{% url 'login' %}" class="text-decoration-none">Log in</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

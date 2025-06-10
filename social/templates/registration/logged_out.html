@@ -1,0 +1,12 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 mx-auto">
+        <div class="alert alert-info">
+            You have been successfully logged out.
+        </div>
+        <a href="{% url 'login' %}" class="btn btn-primary">Login again</a>
+    </div>
+</div>
+{% endblock %}
