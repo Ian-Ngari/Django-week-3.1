@@ -120,11 +120,15 @@ def like_post(request, pk):
         )
     return redirect(request.META.get('HTTP_REFERER', 'home'))
 
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 @require_POST
-@login_required
 def mark_notifications_read(request):
-    request.user.notifications.filter(read=False).update(read=True)
-    return JsonResponse({'status': 'ok'})
+    if request.user.is_authenticated:
+        request.user.notifications.filter(read=False).update(read=True)
+        return JsonResponse({'status': 'ok'})
+    return JsonResponse({'status': 'error'}, status=401)
 
 @login_required
 def update_post(request, pk):

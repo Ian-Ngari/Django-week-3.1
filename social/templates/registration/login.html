@@ -9,10 +9,22 @@
                 <form method="post">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <input type="text" name="username" class="form-control" placeholder="Username" required>
+                        <input type="text" name="username" class="form-control {% if form.errors.username %}is-invalid{% endif %}" 
+                               placeholder="Username" required>
+                        {% if form.errors.username %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.username.0 }}
+                            </div>
+                        {% endif %}
                     </div>
                     <div class="mb-3">
-                        <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        <input type="password" name="password" class="form-control {% if form.errors.password %}is-invalid{% endif %}" 
+                               placeholder="Password" required>
+                        {% if form.errors.password %}
+                            <div class="invalid-feedback">
+                                {{ form.errors.password.0 }}
+                            </div>
+                        {% endif %}
                     </div>
                     <button type="submit" class="btn btn-primary w-100 mb-3">Log In</button>
                     <div class="text-center mb-3">
